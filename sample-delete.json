@@ -1,0 +1,31 @@
+{
+  "before": {
+    "emp_no": 499553,
+    "birth_date": -5719,
+    "first_name": "Hideyuki",
+    "last_name": "Delgrande",
+    "gender": "F",
+    "hire_date": 10978
+  },
+  "after": null,
+  "source": {
+    "version": "2.3.4.Final",
+    "connector": "mysql",
+    "name": "employeesdb",
+    "ts_ms": 1771545745000,
+    "snapshot": "false",
+    "db": "employees",
+    "sequence": null,
+    "table": "employees_streaming",
+    "server_id": 1377007805,
+    "gtid": null,
+    "file": "mysql-bin-changelog.000009",
+    "pos": 25731,
+    "row": 2,
+    "thread": 23,
+    "query": null
+  },
+  "op": "d",
+  "ts_ms": 1771545745174,
+  "transaction": null
+}
