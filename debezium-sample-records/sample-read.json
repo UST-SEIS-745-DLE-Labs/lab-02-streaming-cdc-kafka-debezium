@@ -1,0 +1,30 @@
+{
+  "before": null,
+  "after": {
+    "dept_no": "d009",
+    "dept_name": "Customer Service"
+  },
+  "source": {
+    "version": "2.3.4.Final",
+    "connector": "mysql",
+    "name": "employeesdb-new",
+    "ts_ms": 1696272232000,
+    "snapshot": "first",
+    "db": "employees",
+    "sequence": null,
+    "table": "departments_streaming",
+    "server_id": 0,
+    "gtid": null,
+    "file": "mysql-bin-changelog.000042",
+    "pos": 534,
+    "row": 0,
+    "thread": null,
+    "query": null
+  },
+  "op": "r",
+  "ts_ms": 1696272232958,
+  "transaction": null
+}
+
+
+
