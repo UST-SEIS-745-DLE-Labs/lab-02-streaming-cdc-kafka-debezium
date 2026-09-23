@@ -99,6 +99,28 @@ aws rds create-db-instance \
   --no-cli-auto-prompt \
   --no-cli-pager
 
+aws rds wait db-instance-available --db-instance-identifier "${DATABASE_INSTANCE}"  --no-cli-pager
+
+############################################
+# INITIALIZE DATABASE TABLES IN RDS        #
+############################################
+MYSQL_PASSWORD_SECRET_ARN=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | MasterUserSecret.SecretArn" --output text`
+MYSQL_PASSWORD_STRING=`aws secretsmanager get-secret-value --secret-id "${MYSQL_PASSWORD_SECRET_ARN}" --query "SecretString" --output text`
+MYSQL_USER=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | MasterUsername" --output text`
+MYSQL_HOST=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | Endpoint.Address" --output text`
+MYSQL_PASSWORD=`echo $MYSQL_PASSWORD_STRING | python3 -c "import sys, json; print(json.load(sys.stdin)['password'])"`
+MYSQL_SERVER_ID=`mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -sN <<< "SELECT @@server_id"`
+
+git clone https://github.com/datacharmer/test_db /home/codespace/sample_data/test_db
+
+mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" < /home/codespace/sample_data/test_db/employees.sql
+mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -t < /home/codespace/sample_data/test_db/test_employees_md5.sql
+mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -t < sql-create-streaming-tables.sql
+mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -sN <<< "SHOW TABLES FROM employees"
+
+############################################
+# SET UP KAFKA AND DEBEZIUM                #
+############################################
 mkdir /home/codespace/lab2-files
 mv *.zip /home/codespace/lab2-files
 scp -r -i "${LAB_KEY_FILE}" /home/codespace/lab2-files "ec2-user@${EC2_DNS}:/home/ec2-user/docker-share"
@@ -163,8 +185,6 @@ docker run -d \
   quay.io/debezium/debezium-ui:2.4 # Run debezium-ui (port 8080)
 
 docker exec kafka /kafka/bin/kafka-topics.sh --list --bootstrap-server 0.0.0.0:9092
-
-aws rds wait db-instance-available --db-instance-identifier "${DATABASE_INSTANCE}"  --no-cli-pager
 
 exit
 exit

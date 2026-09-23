@@ -6,22 +6,12 @@ EC2_INSTANCE_ID=`aws ec2 describe-instances --filters "Name=tag:Name,Values=${LA
 EC2_DNS=`aws ec2 describe-instances --filters "Name=tag:Name,Values=${LAB_EC2_NAME}" --query 'Reservations[*].Instances[*].PublicDnsName | [0] | [0]' --output text`
 S3_BUCKET_NAME=`aws s3api list-buckets --query "Buckets[0].Name" --output text`
 
-############################################
-# INITIALIZE DATABASE TABLES IN RDS        #
-############################################
 MYSQL_PASSWORD_SECRET_ARN=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | MasterUserSecret.SecretArn" --output text`
 MYSQL_PASSWORD_STRING=`aws secretsmanager get-secret-value --secret-id "${MYSQL_PASSWORD_SECRET_ARN}" --query "SecretString" --output text`
 MYSQL_USER=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | MasterUsername" --output text`
 MYSQL_HOST=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | Endpoint.Address" --output text`
 MYSQL_PASSWORD=`echo $MYSQL_PASSWORD_STRING | python3 -c "import sys, json; print(json.load(sys.stdin)['password'])"`
 MYSQL_SERVER_ID=`mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -sN <<< "SELECT @@server_id"`
-
-git clone https://github.com/datacharmer/test_db /home/codespace/sample_data/test_db
-
-mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" < /home/codespace/sample_data/test_db/employees.sql
-mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -t < /home/codespace/sample_data/test_db/test_employees_md5.sql
-mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -t < sql-create-streaming-tables.sql
-mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -sN <<< "SHOW TABLES FROM employees"
 
 ############################################
 # SET UP STREAMING PIPELINE FROM RDS TO S3 #

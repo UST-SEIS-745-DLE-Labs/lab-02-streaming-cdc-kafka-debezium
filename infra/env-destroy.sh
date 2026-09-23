@@ -16,5 +16,5 @@ aws rds delete-db-instance --db-instance-identifier "${DATABASE_INSTANCE}" --ski
 aws ec2 wait instance-terminated --instance-ids ${EC2_INSTANCE_ID}  --no-cli-pager
 aws ec2 delete-security-group --group-name ${LAB_EC2_NAME}-sg  --no-cli-pager
 aws rds wait db-instance-deleted --db-instance-identifier "${DATABASE_INSTANCE}"  --no-cli-pager
-aws ec2 delete-security-group --group-name "rds-securitygroup"  --no-cli-pager
+aws ec2 delete-security-group --group-name "${DATABASE_SECURITY_GROUP}"  --no-cli-pager
 aws rds delete-db-parameter-group --db-parameter-group-name "mysql-debezium-pg"  --no-cli-pager
