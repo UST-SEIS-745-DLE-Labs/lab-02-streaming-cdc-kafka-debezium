@@ -109,14 +109,18 @@ MYSQL_PASSWORD_STRING=`aws secretsmanager get-secret-value --secret-id "${MYSQL_
 MYSQL_USER=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | MasterUsername" --output text`
 MYSQL_HOST=`aws rds describe-db-instances --db-instance-identifier "${DATABASE_INSTANCE}" --query "DBInstances | [0] | Endpoint.Address" --output text`
 MYSQL_PASSWORD=`echo $MYSQL_PASSWORD_STRING | python3 -c "import sys, json; print(json.load(sys.stdin)['password'])"`
-MYSQL_SERVER_ID=`mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -sN <<< "SELECT @@server_id"`
 
 git clone https://github.com/datacharmer/test_db /home/codespace/sample_data/test_db
+cd /home/codespace/sample_data/test_db
 
 mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" < /home/codespace/sample_data/test_db/employees.sql
 mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -t < /home/codespace/sample_data/test_db/test_employees_md5.sql
+
+cd -
+
 mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -t < sql-create-streaming-tables.sql
 mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -sN <<< "SHOW TABLES FROM employees"
+
 
 ############################################
 # SET UP KAFKA AND DEBEZIUM                #
