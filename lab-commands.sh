@@ -63,6 +63,8 @@ curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" 
     }
   '
 
+echo "Access Debezium UI here: http://${EC2_DNS}:8080"
+
 # Check connector and task status using the Kafka Connect API
 curl http://${EC2_DNS}:8083/connectors
 curl http://${EC2_DNS}:8083/connectors/employees-mysql-source/status

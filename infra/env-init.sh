@@ -126,7 +126,7 @@ mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -sN <<< "SHOW TA
 # SET UP KAFKA AND DEBEZIUM                #
 ############################################
 mkdir /home/codespace/lab2-files
-mv *.zip /home/codespace/lab2-files
+cp confluentinc-kafka-connect-s3-10.5.6.zip /home/codespace/lab2-files
 scp -r -i "${LAB_KEY_FILE}" /home/codespace/lab2-files "ec2-user@${EC2_DNS}:/home/ec2-user/docker-share"
 
 ssh -i "${LAB_KEY_FILE}" "ec2-user@${EC2_DNS}"
