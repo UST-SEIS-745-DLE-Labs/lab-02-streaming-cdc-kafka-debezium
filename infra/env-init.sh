@@ -139,6 +139,7 @@ sudo usermod -aG docker "ec2-user"
 newgrp docker
 chmod 777 docker-share
 cd docker-share
+sudo chmod 777 confluentinc-kafka-connect-s3-10.5.6.zip
 unzip confluentinc-kafka-connect-s3-10.5.6.zip
 
 # Start Zookeeper
